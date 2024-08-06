@@ -1,0 +1,10 @@
+<!-- app/views/taskForm.html -->
+<form ng-submit="addTask()">
+    <input type="text" ng-model="newTask.title" placeholder="Task Title" required>
+    <input type="text" ng-model="newTask.description" placeholder="Task Description">
+    <select ng-model="newTask.status">
+        <option value="PENDING">Pending</option>
+        <option value="COMPLETED">Completed</option>
+    </select>
+    <button type="submit">Add/Update Task</button>
+</form>

@@ -1,0 +1,194 @@
+<!--main UI entry point of this task app-->
+<!DOCTYPE html>
+<!--ng-app: tells AngularJS that this is the root element of the AngularJS application.-->
+<html lang="en" ng-app="taskManagerApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/services/taskService.js"></script>
+    <script src="app/controllers/taskController.js"></script>
+  
+    <style>
+        .toast {
+            z-index: 9999; /* Ensure it’s above other elements but doesn’t overlap header */
+        }
+
+        .header {
+            z-index: 10000; /* Ensure header is above toasts if needed */
+        }
+        .table-container {
+            width: 80%;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .add-task-container {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .add-task-container button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropbtn {
+        background-color:  #fdfefe ;
+        color:  #3a3d3f ;
+        border: none;
+        cursor: pointer;
+        }
+
+        /* The container <div> */
+        .dropdown {
+        position: relative;
+        display: inline-block;
+        }
+
+        /* Dropdown Content (do not show by Default) */
+        .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: #f1f1f1}
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+        display: block;
+        }
+
+        /* styling for different task statuses */
+        .task-new {
+            background-color: #aed6f1 ; /* Light Blue */
+            color: black;
+        }
+
+        .task-completed {
+            background-color: #a3e4d7 ; /* Light Green */
+            color: black;
+        }
+
+        .task-pending {
+            background-color:  #f9e79f ; /* Light Yellow */
+            color: black;
+        }
+
+        .task-closed {
+            background-color:  #f5b7b1 ; /* Light Red */
+            color: white;
+        }
+
+        .task-active {
+            background-color: #9e9e9e; /* Light Gray */
+            color: black;
+        }
+
+</style>
+</head>
+<!--ng-controller: manages the HTML in its scope -->
+<body ng-controller="taskController">
+
+    <div class="alert alert-danger" ng-if="errorMessage">
+        {{ errorMessage }}
+        <button ng-click="clearErrorMessage()">Close</button>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--ng-repeat: it is like a Java for loop-->
+                <tr ng-repeat="task in tasks" ng-class="{
+                    'task-new': task.status === 'New',
+                    'task-completed': task.status === 'Completed',
+                    'task-pending': task.status === 'Pending',
+                    'task-closed': task.status === 'Closed',
+                    'task-active': task.status === 'Active'
+                }">
+                    <td>{{ task.id }}</td>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td> 
+                        <div class="dropdown" ng-click="toggleDropdown($event, task)">
+                            <button class="dropbtn" type="button">
+                               {{task.status}}
+                            </button>
+                            <div class="dropdown-content">
+                                <a ng-click="updateStatus(task, 'New')" ng-if="task.status !== 'New'" style="cursor: pointer;">New</a>
+                                <a ng-click="updateStatus(task, 'Active')" ng-if="task.status !== 'Active'" style="cursor: pointer;">Active</a>
+                                <a ng-click="updateStatus(task, 'Completed')" ng-if="task.status !== 'Completed'" style="cursor: pointer;">Completed</a>
+                                <a ng-click="updateStatus(task, 'Pending')" ng-if="task.status !== 'Pending'" style="cursor: pointer;">Pending</a>
+                                <a ng-click="updateStatus(task, 'Closed')" ng-if="task.status !== 'Closed'" style="cursor: pointer;">Closed</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="dropdown">
+                        <div class="dropdown" ng-click="toggleDropdown($event, task)">
+                            <button class="dropbtn" type="button">
+                                ...
+                            </button>
+                            <div class="dropdown-content">
+                                <a ng-href="app/views/editTask.html?id={{task.id}}" style="cursor: pointer;">Edit</a>
+                                <a ng-click="deleteTask(task.id)" style="cursor: pointer">Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="add-task-container">
+            <button ng-click="redirectToAddTask()">Add New Task</button>
+        </div>
+    </div>
+
+</body>
+</html>

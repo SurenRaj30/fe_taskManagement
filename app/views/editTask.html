@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="taskManagerApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Task</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="../app.js"></script>
+    <script src="../services/taskService.js"></script>
+    <script src="../controllers/taskEditController.js"></script>
+    <style>
+        .form-container {
+            width: 50%;
+            margin: 100px auto;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, select, button {
+            margin: 10px 0;
+            padding: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body ng-controller="taskEditController">
+
+    <div class="form-container">
+        <h2>Edit Task</h2>
+        <form ng-submit="saveTask()">
+            <input type="text" ng-model="selectedTask.title" placeholder="Task Title" required>
+            <input type="text" ng-model="selectedTask.description" placeholder="Task Description">
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+</body>
+</html>

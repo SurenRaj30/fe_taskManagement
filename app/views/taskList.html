@@ -1,0 +1,9 @@
+<!-- app/views/taskList.html -->
+<ul>
+    <li ng-repeat="task in tasks">
+        <span ng-class="{'completed': task.status === 'COMPLETED'}">{{ task.title }}</span> - {{ task.description }}
+        <button ng-click="updateTask(task)">Mark as {{ task.status === 'COMPLETED' ? 'Pending' : 'Completed' }}</button>
+        <button ng-click="editTask(task)">Edit</button>
+        <button ng-click="deleteTask(task.id)">Delete</button>
+    </li>
+</ul>

@@ -1,0 +1,14 @@
+Main Flow Example:
+
+    User clicks "Edit" on a task in the view.
+    Controller: The taskController has a function (e.g., updateTask(task)) that is triggered by the click. This function might open an edit form and populate it with the task details.
+    Service: When the user saves the changes, the controller calls taskService.updateTask(task).
+    Service makes a PUT request to the backend API to update the task.
+    Controller: Once the service returns the response (e.g., the updated task or an error), the controller updates the view to reflect the changes or shows an error message.
+
+Flow Summary:
+
+    View: User interacts → triggers a controller function.
+    Controller: Processes the input, calls a service for data operations.
+    Service: Makes HTTP requests, returns data to the controller.
+    Controller: Updates the view based on the service's response.
