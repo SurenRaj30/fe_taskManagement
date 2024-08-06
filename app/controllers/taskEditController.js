@@ -7,6 +7,7 @@ app.controller('taskEditController', ['$scope', '$window', 'taskService', functi
         try {
             $scope.selectedTask = response.data;
         } catch (e) {
+            //to handle invalid response format
             alert('Unexpected response format');
         }
     })
